@@ -9,7 +9,6 @@ library(shinydashboard)
 library(scales)
 library(devtools)
 library(dygraphs)
-# library(XLConnect)
 library(readxl)
 
 ### Ajay Pillarisetti, University of California, Berkeley, 2015
@@ -41,7 +40,6 @@ read.sum <- function(file, fname,tzone="GMT"){
 	sums <- fread(file)
 	names(sums)[1:3]  <- c('datetime','temp','serial')
 	sums[,datetime:=ymd_hms(datetime, tz="Africa/Accra")]
- 
 	}else{warning(paste("File", file, "does not contain valid iButton data", sep=" "))}
 }
 
@@ -57,18 +55,13 @@ if(OS =='Darwin'){path_to_dropbox <- paste("~/Dropbox")}else(warning("Not Window
 
 
 #create the data
-files <- list.files(paste(path_to_dropbox, "/LPG_Study/serverTest/archive", sep=""), full.names=T, recursive=T)
+files <- list.files(paste(path_to_dropbox, "/LPG_Study/archive", sep=""), full.names=T, recursive=T)
 files <- grep('attributes', files, value=T, invert=T)
-all <- lapply(files, fread)
-all <- do.call(rbind, all)
-all[,device_id:=substring(serial, nchar(serial)-7, nchar(serial))]
 
 #data prep
-log.sheet <- read_excel(paste(path_to_dropbox, '/Ghana_adoption_data_SHARED/Stove_use_protocol/SUMS_logsheet_draft_2015-07-2015.xlsx', sep=""))[,1:5]
+log.sheet <- read_excel(paste(path_to_dropbox, '/LPG_Study/logsheets/USAID_iSUMS_logsheet.xlsx', sep=""))[,1:5]
 log.sheet <- as.data.table(log.sheet)
-#restruct to i for now
-log.sheet <- log.sheet[Type=='i']
-setnames(log.sheet, c('device_type','community','device_id','mid','location'))
+setnames(log.sheet, c('community','device_id','mid','location','deploy_dt'))
 log.location <- read_excel(paste(path_to_dropbox, '/Ghana_adoption_data_SHARED/Stove_use_protocol/SUMS_logsheet_draft_2015-07-2015.xlsx', sep=""), sheet=2)[,4:5]
 log.location <- as.data.table(log.location)
 setnames(log.location, 1:2, c('location', 'description'))
@@ -77,22 +70,4 @@ log.location[,description:=gsub(" #", "_",description)]
 log.location[,description:=gsub(" ", "_",description)]
 log.location[,description:=tolower(description)]
 log.location <- log.location[!is.na(location)]
-
 log.sheet
-
-all <- merge(all, log.sheet, by='device_id', all.x=T)
-all[,datetime:=ymd_hms(datetime)]
-
-all[,location:=as.character(location)]
-log.location[,location:=as.character(location)]
-
-
-setkey(all, 'location')
-setkey(log.location, 'location')
-
-all <- log.location[all]
-# all[,stove_loc:=gsub(" ","", stove_loc)]
-
-setkey(all)
-all[,serial:=substring(serial,1,16)]
-all <- unique(all)

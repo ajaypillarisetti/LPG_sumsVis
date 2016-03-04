@@ -4,8 +4,6 @@ dashboardPage(
     sidebarMenu(
 	    menuItem("Overview", tabName = "overview",  icon = icon("list-alt")),
 	    menuItem("SUMs Diagnostics", tabName = "diagnostics",  icon = icon("area-chart"))
-    	# menuItem("Raw data", tabName = "rawdata",  icon = icon("tasks"))
-        # menuItem("Merge Files", tabName = "merge",  icon = icon("files-o"))
     )
   ),
 	dashboardBody(
@@ -20,12 +18,13 @@ dashboardPage(
                 fluidRow(
                     box(width=4, collapsible = TRUE, status="info", solidHeader=TRUE, title="Introduction",
                         h5('Welcome to CheckSUM!'),
-                        p("CheckSUM is a simple tool to visualize and quickly check the status of stove use monitors in the field. Begin by selecting the date range of interest and maternal ID at right.")
+                        p("CheckSUM is a simple tool to visualize and quickly check the status of stove use monitors in the field. ")
                     ),
                     column(width=4,
                         box(width=NULL, collapsible = FALSE, status='info', solidHeader=T, title='Filter Data',
-                            dateRangeInput("dateSelect", label='Select a Date', start = Sys.Date()-7, end=Sys.Date()),
                             uiOutput('selectMID')
+                            # dateRangeInput("dateSelect", label='Select a Date', start = Sys.Date()-7, end=Sys.Date())
+                            # uiOutput('dateRange')
                         )
                         # box(width=NULL, collapsible = FALSE, status='info', solidHeader=T, title='Select an MID.')
                     ),
@@ -44,7 +43,6 @@ dashboardPage(
                     infoBoxOutput('avgDailyRange')
 
                 )
-
 			),      
     		tabItem("diagnostics",
                 fluidRow(
