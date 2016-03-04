@@ -50,7 +50,7 @@ shinyServer(function(input, output) {
 	fileMin <- reactive({data_cleaned()[,min(temp)]})
 	fileMax <- reactive({data_cleaned()[,max(temp)]})
 	fileSamplingInterval <- reactive({as.numeric(data_cleaned()[10,'datetime',with=F]-data_cleaned()[9,'datetime',with=F])})
-	output$selectMID <- renderUI({selectInput('mid', "Maternal ID", log.sheet[!is.na(mid),sort(unique(mid))])})
+	output$selectMID <- renderUI({selectInput('mid', "Household ID", log.sheet[!is.na(mid),sort(unique(mid))])})
 	output$selectedMID <- renderText({paste("Time-series plot (", input$mid, ")", sep="")})
 	output$selectFiles <- renderUI({
     	if(is.null(input$mid)) return()
